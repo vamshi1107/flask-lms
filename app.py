@@ -163,7 +163,7 @@ def getDue():
     col = db["issues"]
     d = 0
     m = current_time()
-    for i in col.find({"mid": mid.upper()}):
+    for i in col.find({"mid": mid.upper(), "paid": "false"}):
         c = int((m - i["time"]) / (1000 * 60 * 60 * 24))
         d += c if c > 0 else 1
     return {"due": d * 5}
@@ -186,11 +186,31 @@ def getmemberissue():
     mid = request.args.get("mid", "")
     col = db["issues"]
     v = []
-    for i in col.find({"mid": mid.upper()}):
+    for i in col.find({"mid": mid.upper(), "paid": "false"}):
         del i["_id"]
         b = book(i["bid"])
         del b["_id"]
         v.append({**i, **b})
+    return {"data": v}
+
+
+@app.route("/getallissues", methods=["GET"])
+def getallissues():
+    col = db["issues"]
+    v = []
+    for i in col.find({}):
+        del i["_id"]
+        v.append({**i})
+    return {"data": v}
+
+
+@app.route("/getallreturns", methods=["GET"])
+def getallreturns():
+    col = db["returns"]
+    v = []
+    for i in col.find({}):
+        del i["_id"]
+        v.append({**i})
     return {"data": v}
 
 
@@ -204,17 +224,23 @@ def book(bid):
     return db["books"].find_one({"bid": bid})
 
 
+def member(mid):
+    return db["members"].find_one({"mid": mid})
+
+
 @app.route("/returnbook", methods=["POST"])
 def returnBook():
     req = dict(request.json)
     col = db["issues"]
+    ret = db["returns"]
     q = {"bid": req["bid"], "mid": req["mid"], "date": req["date"], "time": req["time"]}
-    x = col.delete_one(q)
+    x = col.update_one(q, {"$set": {"paid": "true"}})
+    re = ret.insert_one({**q, **{"rtime": current_time(), "amount": req["amount"]}})
     n = db["books"].find_one({"bid": req["bid"]})["quantity"]
     bres = db["books"].update_one(
         {"bid": req["bid"]}, {"$set": {"quantity": int(n) + 1}}
     )
-    return jsonify({"status": x.deleted_count, "n": bres.modified_count})
+    return jsonify({"status": x.modified_count, "n": bres.modified_count})
 
 
 @app.route("/removemember", methods=["GET"])
@@ -229,6 +255,41 @@ def removeMember():
 def searchBooks():
     url = request.args.get("url", "")
     return requests.get(url).content
+
+
+@app.route("/amount", methods=["GET"])
+def amount():
+    col = db["returns"]
+    r = col.aggregate(
+        [
+            {
+                "$group": {
+                    "_id": "$mid",
+                    "totalAmount": {"$sum": {"$sum": ["$amount"]}},
+                }
+            },
+        ]
+    )
+    v = []
+    for i in r:
+        k = member(i["_id"])
+        del k["_id"]
+        v.append({**i, **k})
+    return {"data": v}
+
+
+@app.route("/issues", methods=["GET"])
+def issues():
+    col = db["issues"]
+    r = col.aggregate([{"$group": {"_id": "$bid", "count": {"$sum": 1}}}])
+    v = []
+    for i in r:
+        b = book(i["_id"])
+        del i["_id"]
+        del b["_id"]
+        k = {**i, **b}
+        v.append(k)
+    return {"data": v}
 
 
 if __name__ == "__main__":
