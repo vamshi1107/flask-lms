@@ -1,0 +1,217 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@500&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Lato:wght@700&display=swap" rel="stylesheet">
+    <title>Photos</title>
+    <script>
+        window.onload = () => {
+            window.history.replaceState("", "")
+        }
+    </script>
+    <style>
+        :root {
+            --color: rgb(25, 211, 155);
+            --header-color: rgb(25, 211, 155);
+        }
+
+        body {
+            margin: 0px;
+            padding: 0px;
+            font-family: 'Open Sans', sans-serif;
+            user-select: none;
+            background-color: var(--color);
+        }
+
+        #whole {
+            width: 100vw;
+            height: 100vh;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        #form {
+            margin-top: -100px;
+            width: 100%;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        #feild {
+            width: 40%;
+            height: 50px;
+            background-color: white;
+            border: .1px solid grey;
+            border-radius: 10px;
+            display: flex;
+            flex-direction: row;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        #result {
+            width: 100%;
+            height: 60vh;
+            background-color: var(--color);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+        }
+
+        #getbut {
+            height: 100%;
+            border-top-right-radius: 10px;
+            border-bottom-right-radius: 10px;
+            border-left: .1px solid grey;
+            border-right: none;
+            border-top: none;
+            border-bottom: none;
+            width: 30%;
+            background-color: white;
+            font-family: 'Roboto', sans-serif;
+            font-size: 1.3rem;
+        }
+
+        #getbut:hover {
+            background-color: whitesmoke;
+        }
+
+        #shc {
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+        }
+
+        #shc>div {
+            display: flex;
+            flex-direction: row;
+            align-items: center;
+            cursor: pointer;
+        }
+
+        #one {
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+        }
+
+        #img {
+            width: 40px;
+            height: 40px;
+        }
+
+        #img>img {
+            color: rgb(179, 194, 194);
+            filter: hue-rotate(90deg) contrast(10);
+            width: 100%;
+            height: auto;
+        }
+
+        #shc>div>span {
+            font-size: 1.2rem;
+            margin: 10px;
+            width: fit-content;
+        }
+
+        #inp {
+            visibility: hidden;
+            width: 0px;
+        }
+
+        #one.off {
+            visibility: hidden;
+            height: 0px;
+            width: 0px;
+        }
+
+        #result>#rim {
+            height: 250px;
+            width: 250px;
+            margin-bottom: 150px;
+        }
+
+        #imres {
+            height: 100%;
+            width: 100%;
+            visibility: hidden;
+        }
+
+        #imres.visibile {
+            visibility: visible;
+        }
+
+        header {
+            height: 70px;
+            background-color: var(--header-color);
+            width: 100vw;
+            overflow: hidden;
+        }
+
+        #titl {
+            font-size: 1.8rem;
+            font-family: 'Lato', sans-serif;
+            text-transform: capitalize;
+            margin: 20px;
+        }
+
+        #search {
+            width: 100%;
+            height: 100%;
+            border: .1px solid grey;
+            border-top-left-radius: 10px;
+            border-bottom-left-radius: 10px;
+            outline: none;
+            font-size: 20px;
+        }
+    </style>
+</head>
+
+<body>
+    <div id="whole">
+        <header>
+            <div id="titl">PHOTOS</div>
+        </header>
+        <div id="result">
+            <div id="rim">
+                <img src="{{img}}" id="imres">
+            </div>
+        </div>
+        <div id="form">
+            <div id="feild">
+                <div id="shc">
+                    <div id="one">
+                        <input type="text" id="search">
+                    </div>
+                </div>
+
+                <button type="submit" id="getbut">Search</button>
+            </div>
+        </div>
+    </div>
+    <script>
+        function search(roll) {
+            var result = document.getElementById("imres")
+            var src = "https://exams.kluniversity.in/PhotosOf_Students_23523N/" + roll + ".jpg"
+            result.src = src
+            result.style.visibility = "visible"
+        }
+
+        document.getElementById("getbut").addEventListener("click", (e) => {
+            search(document.getElementById("search").value)
+        })
+
+    </script>
+</body>
+
+</html>

@@ -12,7 +12,7 @@ client = pymongo.MongoClient(
 )
 db = client["lms"]
 
-app = Flask(__name__)
+app = Flask(__name__, template_folder="templates")
 CORS(app)
 
 
@@ -290,6 +290,15 @@ def issues():
         k = {**i, **b}
         v.append(k)
     return {"data": v}
+
+
+@app.route("/photos")
+def photos():
+    return render_template("photos.html")
+
+
+def search(roll):
+    content = requests.get()
 
 
 if __name__ == "__main__":
