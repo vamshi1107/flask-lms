@@ -1,1 +1,3 @@
-uri = "mongodb://vamshi:qwertyuiop@cluster0-shard-00-00.uayjw.mongodb.net:27017,cluster0-shard-00-01.uayjw.mongodb.net:27017,cluster0-shard-00-02.uayjw.mongodb.net:27017/lms?ssl=true&replicaSet=atlas-v0a7u6-shard-0&authSource=admin&retryWrites=true&w=majority"
+import os
+
+uri = os.environ.get("URI")
